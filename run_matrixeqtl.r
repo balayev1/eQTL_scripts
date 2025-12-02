@@ -10,9 +10,15 @@ eur_in_vst <- args[3]
 eas_in_vst <- args[4]
 gtf_file <- args[5]
 
+eur_in_geno <- "/home/venteicher_30050/balay011/ciseqtl_analysis/eur/eur_genotype_matrix.txt"
+eas_in_geno <- "/home/venteicher_30050/balay011/ciseqtl_analysis/eas/eas_genotype_matrix.txt"
+eur_in_vst <- "/home/venteicher_30050/balay011/ciseqtl_analysis/eur/eur_expression_matrix_vst.txt"
+eas_in_vst <- "/home/venteicher_30050/balay011/ciseqtl_analysis/eas/eas_expression_matrix_vst.txt"
+gtf_file <- "/projects/standard/aventeic/balay011/references/reference_genome_anno/gencode.v45.primary_assembly.annotation.gtf"
+
 # EUR
-geno.common <- fread(eur_in_geno)
-expr.common <- fread(eur_in_vst)
+geno.common <- fread(eur_in_geno, header = TRUE)
+expr.common <- fread(eur_in_vst, header = TRUE)
 
 ### generate SNP and gene position files
 snpinfo <- data.frame(snpid = geno.common$snpid)
@@ -46,8 +52,8 @@ gene_map_unique <- gene_map[!duplicated(geneid)]
 ### set MatrixEQTL parameters
 base.dir = dirname(eur_in_vst)
 useModel = modelLINEAR
-SNP_file_name = paste0(base.dir, "/eur_genotype_matrix.txt")
-expression_file_name = paste0(base.dir, "/eur_expression_matrix.txt")
+SNP_file_name = eur_in_geno
+expression_file_name = eur_in_vst
 covariates_file_name = paste0(base.dir, "/eur_covariates_matrix.txt")
 output_file_name = ""
 output_file_name.cis = paste0(base.dir, "/eur_cis_eqtl_results.txt")
@@ -142,8 +148,8 @@ gene_map_unique <- gene_map[!duplicated(geneid)]
 ### set MatrixEQTL parameters
 base.dir = dirname(eas_in_vst)
 useModel = modelLINEAR
-SNP_file_name = paste0(base.dir, "/eas_genotype_matrix.txt")
-expression_file_name = paste0(base.dir, "/eas_expression_matrix.txt")
+SNP_file_name = eas_in_geno
+expression_file_name = eas_in_vst
 covariates_file_name = paste0(base.dir, "/eas_covariates_matrix.txt")
 output_file_name = ""
 output_file_name.cis = paste0(base.dir, "/eas_cis_eqtl_results.txt")

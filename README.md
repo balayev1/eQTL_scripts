@@ -54,15 +54,18 @@ conda run -n deseq_env \
   Rscript /scratch.global/balay011/ciseqtl_scripts/run_pca.r $CIS_EQTL_OUTDIR/eur/eur_expression_matrix_vst.txt $CIS_EQTL_OUTDIR/eas/eas_expression_matrix_vst.txt
 
 
-## Next we make table of covariates
-EUR_PCA_COVS="$CIS_EQTL_OUTDIR/eur/eur_expr_pcs.txt"
-EAS_PCA_COVS="$CIS_EQTL_OUTDIR/eas/eas_expr_pcs.txt"
+## Next we make table of covariates: 10 genotype PCs, 10 expression PCs, sex, whole-genome coverage and RNA-Seq batch
+EUR_GENO_COVS="$CIS_EQTL_OUTDIR/eur/eur_pca_results.eigenvec"
+EAS_GENO_COVS="$CIS_EQTL_OUTDIR/eas/eas_pca_results.eigenvec"
+EUR_EXPRS_PCA_COVS="$CIS_EQTL_OUTDIR/eur/eur_expr_pcs.txt"
+EAS_EXPRS_PCA_COVS="$CIS_EQTL_OUTDIR/eas/eas_expr_pcs.txt"
 EUR_TECH_COVS="/home/venteicher_30050/balay011/gwas_essentials/gwas_covariates/gwas_covariates_eur.txt"
 EAS_TECH_COVS="/home/venteicher_30050/balay011/gwas_essentials/gwas_covariates/gwas_covariates_eas.txt"
-PCK=20 
+NPC_GENO=10
+NPC_EXPRS=10
 
 conda run -n deseq_env \
-  Rscript /scratch.global/balay011/ciseqtl_scripts/make_covariates.r $EUR_PCA_COVS $EAS_PCA_COVS $EUR_TECH_COVS $EAS_TECH_COVS $CIS_EQTL_OUTDIR/eur/eur_expression_matrix_vst.txt $CIS_EQTL_OUTDIR/eas/eas_expression_matrix_vst.txt $BAI_ANNO_WGS $PCK
+  Rscript /scratch.global/balay011/ciseqtl_scripts/make_covariates.r $EUR_GENO_COVS $EAS_GENO_COVS $EUR_EXPRS_PCA_COVS $EAS_EXPRS_PCA_COVS $EUR_TECH_COVS $EAS_TECH_COVS $CIS_EQTL_OUTDIR/eur/eur_expression_matrix_vst.txt $CIS_EQTL_OUTDIR/eas/eas_expression_matrix_vst.txt $BAI_ANNO_WGS $NPC_GENO $NPC_EXPRS
 
 ## Last we run MatrixEQTL to find cis-EQTLs
 conda run -p $MSIPROJECT/balay011/.conda/envs/r433_env \
