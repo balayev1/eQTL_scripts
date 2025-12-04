@@ -10,10 +10,10 @@ eur_in_vst <- args[3]
 eas_in_vst <- args[4]
 gtf_file <- args[5]
 
-eur_in_geno <- "/home/venteicher_30050/balay011/ciseqtl_analysis/eur/eur_genotype_matrix.txt"
-eas_in_geno <- "/home/venteicher_30050/balay011/ciseqtl_analysis/eas/eas_genotype_matrix.txt"
-eur_in_vst <- "/home/venteicher_30050/balay011/ciseqtl_analysis/eur/eur_expression_matrix_vst.txt"
-eas_in_vst <- "/home/venteicher_30050/balay011/ciseqtl_analysis/eas/eas_expression_matrix_vst.txt"
+eur_in_geno <- "/projects/standard/venteicher_30050/balay011/ciseqtl_analysis/eur/eur_genotype_matrix.txt"
+eas_in_geno <- "/projects/standard/venteicher_30050/balay011/ciseqtl_analysis/eas/eas_genotype_matrix.txt"
+eur_in_vst <- "/projects/standard/venteicher_30050/balay011/ciseqtl_analysis/eur/eur_expression_matrix_vst.txt"
+eas_in_vst <- "/projects/standard/venteicher_30050/balay011/ciseqtl_analysis/eas/eas_expression_matrix_vst.txt"
 gtf_file <- "/projects/standard/aventeic/balay011/references/reference_genome_anno/gencode.v45.primary_assembly.annotation.gtf"
 
 # EUR
