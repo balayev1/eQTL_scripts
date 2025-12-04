@@ -1,8 +1,13 @@
 # How to identify cis-eQTLs for GWAS variants?
 
+## Clone repository
+git clone git@github.com:balayev1/eQTL_scripts.git
+
 ## Some steps of the pipeline are highly memory-consuming, so make sure to have enough supplied resources
 srun --mem-per-cpu=128GB --time=12:00:00 --pty --cpus-per-task=1 --x11 -p interactive bash
 
+PWD=$(pwd)
+CIS_EQTL_GITDIR="$PWD/eQTL_scripts/cis_eqtl_scripts"
 CIS_EQTL_OUTDIR="/projects/standard/venteicher_30050/balay011/ciseqtl_analysis"
 
 ## We start by first generating allele dosage matrix from plink2 GWAS files.
@@ -43,15 +48,15 @@ conda run -n gwas_env \
 BAI_ANNO_RNA="/projects/standard/aventeic/balay011/scripts/RNA_Seq_chordomaBai_anno.txt"
 BAI_ANNO_WGS="/projects/standard/aventeic/balay011/scripts/WGS_chordomaBai_anno.txt"
 conda run -n deseq_env \
-  Rscript /scratch.global/balay011/ciseqtl_scripts/sampleid_alignment.r $CIS_EQTL_OUTDIR/eur_allele_dosage.raw $CIS_EQTL_OUTDIR/eas_allele_dosage.raw "/projects/standard/venteicher_30050/balay011/RNA_Seq_counts/CHORDASV/Counts/raw_counts.matrix.csv" "/projects/standard/venteicher_30050/balay011/RNA_Seq_counts/RNASeq_CHORDBAI/Counts/raw_counts.matrix.csv" $CIS_EQTL_OUTDIR  $BAI_ANNO_RNA $BAI_ANNO_WGS
+  Rscript $CIS_EQTL_GITDIR/sampleid_alignment.r $CIS_EQTL_OUTDIR/eur_allele_dosage.raw $CIS_EQTL_OUTDIR/eas_allele_dosage.raw "/projects/standard/venteicher_30050/balay011/RNA_Seq_counts/CHORDASV/Counts/raw_counts.matrix.csv" "/projects/standard/venteicher_30050/balay011/RNA_Seq_counts/RNASeq_CHORDBAI/Counts/raw_counts.matrix.csv" $CIS_EQTL_OUTDIR  $BAI_ANNO_RNA $BAI_ANNO_WGS
 
 ## Next we use sample ID aligned expression matrices normalization using vst from DESeq2 (we also keep only protein-coding and lncRNA genes + IG and TR constant genes)
 conda run -n deseq_env \
-  Rscript /scratch.global/balay011/ciseqtl_scripts/apply_vst.r $CIS_EQTL_OUTDIR/eur/eur_expression_matrix.txt $CIS_EQTL_OUTDIR/eas/eas_expression_matrix.txt /projects/standard/aventeic/balay011/references/reference_genome_anno/gencode.v45.primary_assembly.annotation.gtf
+  Rscript $CIS_EQTL_GITDIR/apply_vst.r $CIS_EQTL_OUTDIR/eur/eur_expression_matrix.txt $CIS_EQTL_OUTDIR/eas/eas_expression_matrix.txt /projects/standard/aventeic/balay011/references/reference_genome_anno/gencode.v45.primary_assembly.annotation.gtf
 
 ## Next we extract PCs in the vst-normalized expression matrices
 conda run -n deseq_env \
-  Rscript /scratch.global/balay011/ciseqtl_scripts/run_pca.r $CIS_EQTL_OUTDIR/eur/eur_expression_matrix_vst.txt $CIS_EQTL_OUTDIR/eas/eas_expression_matrix_vst.txt
+  Rscript $CIS_EQTL_GITDIR/run_exprs_pca.r $CIS_EQTL_OUTDIR/eur/eur_expression_matrix_vst.txt $CIS_EQTL_OUTDIR/eas/eas_expression_matrix_vst.txt
 
 
 ## Next we make table of covariates: 10 genotype PCs, 10 expression PCs, sex, whole-genome coverage and RNA-Seq batch
@@ -65,8 +70,8 @@ NPC_GENO=10
 NPC_EXPRS=10
 
 conda run -n deseq_env \
-  Rscript /scratch.global/balay011/ciseqtl_scripts/make_covariates.r $EUR_GENO_COVS $EAS_GENO_COVS $EUR_EXPRS_PCA_COVS $EAS_EXPRS_PCA_COVS $EUR_TECH_COVS $EAS_TECH_COVS $CIS_EQTL_OUTDIR/eur/eur_expression_matrix_vst.txt $CIS_EQTL_OUTDIR/eas/eas_expression_matrix_vst.txt $BAI_ANNO_WGS $NPC_GENO $NPC_EXPRS
+  Rscript $CIS_EQTL_GITDIR/make_covariates.r $EUR_GENO_COVS $EAS_GENO_COVS $EUR_EXPRS_PCA_COVS $EAS_EXPRS_PCA_COVS $EUR_TECH_COVS $EAS_TECH_COVS $CIS_EQTL_OUTDIR/eur/eur_expression_matrix_vst.txt $CIS_EQTL_OUTDIR/eas/eas_expression_matrix_vst.txt $BAI_ANNO_WGS $NPC_GENO $NPC_EXPRS
 
 ## Last we run MatrixEQTL to find cis-EQTLs
-conda run -p $MSIPROJECT/balay011/.conda/envs/r433_env \
-  Rscript /scratch.global/balay011/ciseqtl_scripts/run_matrixeqtl.r $CIS_EQTL_OUTDIR/eur/eur_genotype_matrix.txt $CIS_EQTL_OUTDIR/eas/eas_genotype_matrix.txt $CIS_EQTL_OUTDIR/eur/eur_expression_matrix_vst.txt $CIS_EQTL_OUTDIR/eas/eas_expression_matrix_vst.txt /projects/standard/aventeic/balay011/references/reference_genome_anno/gencode.v45.primary_assembly.annotation.gtf
+conda run -n deseq_env \
+  Rscript $CIS_EQTL_GITDIR/run_matrixeqtl.r $CIS_EQTL_OUTDIR/eur/eur_genotype_matrix.txt $CIS_EQTL_OUTDIR/eas/eas_genotype_matrix.txt $CIS_EQTL_OUTDIR/eur/eur_expression_matrix_vst.txt $CIS_EQTL_OUTDIR/eas/eas_expression_matrix_vst.txt /projects/standard/aventeic/balay011/references/reference_genome_anno/gencode.v45.primary_assembly.annotation.gtf
