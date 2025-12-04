@@ -67,6 +67,8 @@ dependencies:
   - libgcc=15.2.0=he0feb66_14
   - libgcc-devel_linux-64=15.2.0=hcc6f6b0_114
   - libgcc-ng=15.2.0=h69a702a_14
+  - libgcc-devel_linux-64=15.2.0=hcc6f6b0_114
+  - libgcc-ng=15.2.0=h69a702a_14
   - libgfortran=15.2.0=h69a702a_14
   - libgfortran-ng=15.2.0=h69a702a_14
   - libgfortran5=15.2.0=h68bc16d_14
@@ -139,6 +141,7 @@ dependencies:
   - r-magrittr=2.0.3=r43hb1dbf0f_3
   - r-mass=7.3_60.0.1=r43hb1dbf0f_1
   - r-matrix=1.6_5=r43he966344_1
+  - r-matrixeqtl=2.3=r43hc72bb7e_4
   - r-matrixstats=1.5.0=r43h2b5f3a1_0
   - r-mgcv=1.9_3=r43h2ae2be5_0
   - r-mixsqp=0.3_54=r43hb79369c_3
